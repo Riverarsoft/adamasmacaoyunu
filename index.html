@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adam Asmaca</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        #word { font-size: 2rem; letter-spacing: 10px; margin: 20px; }
+        #message { margin: 10px; font-size: 1.5rem; color: red; }
+        #letters { margin-top: 20px; }
+        button { padding: 10px 15px; margin: 5px; font-size: 1.2rem; cursor: pointer; }
+        #restart { margin-top: 20px; padding: 10px 20px; background-color: #333; color: #fff; border: none; }
+        #hangman { margin: 20px auto; width: 200px; height: 300px; border: 5px solid #333; position: relative; }
+        .part { display: none; position: absolute; background-color: #333; }
+        .base { width: 100%; height: 10px; bottom: 0; left: 0; }
+        .pole { width: 10px; height: 100%; bottom: 0; left: 50px; }
+        .beam { width: 100px; height: 10px; top: 0; left: 50px; }
+        .rope { width: 2px; height: 40px; top: 10px; left: 145px; }
+        .head { width: 40px; height: 40px; border-radius: 50%; top: 50px; left: 125px; border: 5px solid #333; }
+        .body { width: 2px; height: 70px; top: 90px; left: 145px; background-color: #333; }
+        .arm-left { width: 50px; height: 2px; top: 110px; left: 95px; }
+        .arm-right { width: 50px; height: 2px; top: 110px; left: 145px; }
+        .leg-left { width: 50px; height: 2px; top: 160px; left: 95px; }
+        .leg-right { width: 50px; height: 2px; top: 160px; left: 145px; }
+    </style>
+</head>
+<body>
+    <h1>Adam Asmaca Oyunu</h1>
+    <div id="hangman">
+        <div class="part base"></div>
+        <div class="part pole"></div>
+        <div class="part beam"></div>
+        <div class="part rope"></div>
+        <div class="part head"></div>
+        <div class="part body"></div>
+        <div class="part arm-left"></div>
+        <div class="part arm-right"></div>
+        <div class="part leg-left"></div>
+        <div class="part leg-right"></div>
+    </div>
+    <div id="word">_ _ _ _ _</div>
+    <div id="message"></div>
+    <div id="letters"></div>
+    <button id="restart">Tekrar Oyna</button>
+
+    <script>
+        const words = ["JAVASCRIPT", "HTML", "CSS", "REACT", "NODEJS"];
+        let selectedWord = words[Math.floor(Math.random() * words.length)];
+        let correctLetters = [];
+        let wrongGuesses = 0;
+        const parts = document.querySelectorAll('.part');
+
+        function displayWord() {
+            const display = selectedWord.split('').map(letter => correctLetters.includes(letter) ? letter : '_').join(' ');
+            document.getElementById('word').textContent = display;
+            if (!display.includes('_')) {
+                document.getElementById('message').textContent = "Tebrikler! Kazandınız!";
+                disableButtons();
+            }
+        }
+
+        function disableButtons() {
+            document.querySelectorAll('#letters button').forEach(button => button.disabled = true);
+        }
+
+        function createButtons() {
+            const lettersDiv = document.getElementById('letters');
+            lettersDiv.innerHTML = '';
+            for (let i = 65; i <= 90; i++) {
+                const button = document.createElement('button');
+                button.textContent = String.fromCharCode(i);
+                button.addEventListener('click', () => handleGuess(button));
+                lettersDiv.appendChild(button);
+            }
+        }
+
+        function handleGuess(button) {
+            const letter = button.textContent;
+            button.disabled = true;
+            if (selectedWord.includes(letter)) {
+                correctLetters.push(letter);
+            } else {
+                parts[wrongGuesses].style.display = 'block';
+                wrongGuesses++;
+                document.getElementById('message').textContent = `Yanlış tahmin: ${wrongGuesses}`;
+                if (wrongGuesses === parts.length) {
+                    document.getElementById('message').textContent = `Kaybettiniz! Kelime: ${selectedWord}`;
+                    disableButtons();
+                }
+            }
+            displayWord();
+        }
+
+        document.getElementById('restart').addEventListener('click', () => location.reload());
+
+        createButtons();
+        displayWord();
+    </script>
+</body>
+</html>
