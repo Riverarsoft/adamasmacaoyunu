@@ -11,7 +11,7 @@
         #word { font-size: 2rem; letter-spacing: 10px; margin: 20px; }
         #message { margin: 10px; font-size: 1.5rem; color: red; }
         #letters { margin-top: 20px; }
-        button { padding: 10px 15px; margin: 5px; font-size: 1.2rem; cursor: pointer; }
+        button { padding: 7.5px 11.25px; margin: 3.75px; font-size: 0.9rem; cursor: pointer; background-color: silver; color: brown; font-weight: bold; }
         #restart { margin-top: 20px; padding: 10px 20px; background-color: #333; color: #fff; border: none; }
         #hangman { margin: 20px auto; width: 200px; height: 300px; border: 5px solid #333; position: relative; }
         .part { display: none; position: absolute; background-color: #333; }
@@ -23,8 +23,8 @@
         .body { width: 2px; height: 70px; top: 90px; left: 145px; background-color: #333; }
         .arm-left { width: 50px; height: 2px; top: 110px; left: 95px; }
         .arm-right { width: 50px; height: 2px; top: 110px; left: 145px; }
-        .leg-left { width: 50px; height: 2px; top: 160px; left: 95px; }
-        .leg-right { width: 50px; height: 2px; top: 160px; left: 145px; }
+        .leg-left { width: 50px; height: 2px; top: 160px; left: 145px; transform: rotate(135deg); transform-origin: top left; }
+        .leg-right { width: 50px; height: 2px; top: 160px; left: 145px; transform: rotate(45deg); transform-origin: top left; }
     </style>
 </head>
 <body>
@@ -47,7 +47,7 @@
     <button id="restart">Tekrar Oyna</button>
 
     <script>
-        const words = ["JAVASCRIPT", "HTML", "CSS", "REACT", "NODEJS"];
+        const words = ["ELMA", "KİTAP", "KALEM", "BİLGİSAYAR", "KEDİ", "KÖPEK", "ARABA", "TELEFON", "YAZILIM", "ÖĞRETMEN", "MÜHENDİS", "DOKTOR", "HASTANE", "MASA", "SANDALYE", "TÜRKİYE", "KONYA", "ANKARA", "İSTANBUL", "UZAY", "GÜNEŞ", "AY", "YILDIZ", "ŞEHİR", "DENİZ", "OKYANUS", "NEHİR", "ORMAN", "EV", "BİNA", "ÇATI", "KAPI", "PENCERE", "KİLİT", "ANAHTAR"];
         let selectedWord = words[Math.floor(Math.random() * words.length)];
         let correctLetters = [];
         let wrongGuesses = 0;
@@ -63,15 +63,16 @@
         }
 
         function disableButtons() {
-            document.querySelectorAll('#letters button').forEach(button => button.disabled = true);
+            document.querySelectorAll('#letters button').forEach(button => button.style.display = 'none');
         }
 
         function createButtons() {
             const lettersDiv = document.getElementById('letters');
             lettersDiv.innerHTML = '';
-            for (let i = 65; i <= 90; i++) {
+            const letters = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+            for (let char of letters) {
                 const button = document.createElement('button');
-                button.textContent = String.fromCharCode(i);
+                button.textContent = char;
                 button.addEventListener('click', () => handleGuess(button));
                 lettersDiv.appendChild(button);
             }
@@ -79,15 +80,15 @@
 
         function handleGuess(button) {
             const letter = button.textContent;
-            button.disabled = true;
+            button.style.display = 'none';
             if (selectedWord.includes(letter)) {
                 correctLetters.push(letter);
             } else {
                 parts[wrongGuesses].style.display = 'block';
                 wrongGuesses++;
-                document.getElementById('message').textContent = `Yanlış tahmin: ${wrongGuesses}`;
                 if (wrongGuesses === parts.length) {
-                    document.getElementById('message').textContent = `Kaybettiniz! Kelime: ${selectedWord}`;
+                    document.getElementById('message').textContent = `Öldünüz! Kelime: ${selectedWord}`;
+                    document.getElementById('word').textContent = selectedWord;
                     disableButtons();
                 }
             }
